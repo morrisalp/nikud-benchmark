@@ -1,3 +1,4 @@
+from collections import Counter
 from nikud import load_rows, strip_nikud, is_ktiv_match
 
 rows = load_rows()
@@ -8,7 +9,13 @@ for lineno, plain, with_nikud in rows:
     if not is_ktiv_match(plain, stripped):
         mismatches.append((lineno, plain, with_nikud, stripped))
 
+plain_counts = Counter(plain for _, plain, _ in rows)
+duplicates = [(plain, count) for plain, count in plain_counts.items() if count > 1]
+
 print(f"Mismatches: {len(mismatches)}/{len(rows)}")
+print(f"Duplicates: {len(duplicates)}")
+for plain, count in duplicates:
+    print(f"  ({count}x) {plain}")
 
 for lineno, plain, with_nikud, stripped in mismatches:
     plain_words = plain.split()
