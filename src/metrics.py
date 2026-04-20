@@ -29,8 +29,11 @@ OUT_DIR = "output"
 def normalize(text: str) -> str:
     """NFC + sort diacritics after each base character for canonical ordering.
     Hebrew combining marks share combining class 220, so NFC leaves their
-    relative order undefined — sort them explicitly for stable comparison."""
+    relative order undefined — sort them explicitly for stable comparison.
+    Also normalizes qamats-katan (U+05C7) → qamats (U+05B8) since some models
+    distinguish them but gold does not."""
     text = unicodedata.normalize("NFC", text)
+    text = text.replace("\u05c7", "\u05b8")
     out = []
     i = 0
     while i < len(text):
