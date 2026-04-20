@@ -37,17 +37,9 @@ def strip_nikud(text):
     return "".join(c for c in text if c not in NIKUD)
 
 
-def load_rows():
-    rows = []
-    with open(DATA_PATH, encoding="utf-8") as f:
-        f.readline()
-        for lineno, line in enumerate(f, start=2):
-            line = line.rstrip("\n")
-            parts = line.split("\t")
-            if len(parts) < 2:
-                continue
-            rows.append((lineno, parts[0], parts[1]))
-    return rows
+def load_gold():
+    import pandas as pd
+    return pd.read_csv(DATA_PATH, sep="\t", encoding="utf-8")
 
 
 def is_ktiv_match(plain, nikud_stripped):

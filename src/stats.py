@@ -1,20 +1,21 @@
+import pandas as pd
 from collections import Counter
-from nikud import NIKUD, load_rows
+from nikud import NIKUD, load_gold
 
-rows = load_rows()
-total = len(rows)
-total_chars = sum(len(plain) for _, plain, _ in rows)
-total_words = sum(len(plain.split()) for _, plain, _ in rows)
+df = load_gold()
+total = len(df)
+word_counts = df["plain"].str.split().str.len()
+total_words = word_counts.sum()
 
 diacritic_counts: Counter = Counter()
-for _, _, nikud in rows:
-    for c in nikud:
+for text in df["nikud"]:
+    for c in text:
         if c in NIKUD:
             diacritic_counts[c] += 1
 
 print(f"Rows:             {total}")
 print(f"Total words:      {total_words}")
-print(f"Avg length:       {total_chars/total:.1f} chars / {total_words/total:.1f} words (plain)")
+print(f"Avg length:       {df['plain'].str.len().mean():.1f} chars / {word_counts.mean():.1f} words (plain)")
 print(f"Total diacritics: {sum(diacritic_counts.values())}")
 print()
 print("Diacritics by type:")
